@@ -60,7 +60,12 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo "Deploying branch: ${params.BRANCH_NAME}"
-            }
+
+                sh '''
+                    sf project deploy start \
+                        --target-org salesforce-pipeline \
+                        --wait 30
+                '''
         }
     }
 }
