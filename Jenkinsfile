@@ -20,7 +20,7 @@ pipeline {
                     $class: 'GitSCM',
                     branches: [[name: "*/${params.BRANCH_NAME}"]],
                     userRemoteConfigs: [[
-                        url: 'git@github.com:kirilo1-ok/salesforce-pipeline.git',
+                        url: 'git@github.com:kirilol-ok/salesforce-pipeline.git',
                         credentialsId: 'github-ssh'
                     ]]
                 ])
