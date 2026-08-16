@@ -53,7 +53,7 @@ pipeline {
 
         stage('Verify Salesforce Connection') {
             steps {
-                sh 'sf org display --target-org target-org'
+                sh 'sf org display --target-org salesforce-pipeline'
             }
         }
 
