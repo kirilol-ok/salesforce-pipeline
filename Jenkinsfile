@@ -33,6 +33,30 @@ pipeline {
             }
         }
 
+        stage('Authenticate Salesforce') {
+            steps {
+                withCredentials([
+                    string(
+                        credentialsId: 'salesforce-auth-url',
+                        variable: 'SFDX_AUTH_URL'
+                    )
+                ]) {
+                    sh '''
+                        printf '%s' "$SFDX_AUTH_URL" |
+                        sf org login sfdx-url \
+                            --sfdx-url-stdin \
+                            --alias target-org
+                    '''
+                }
+            }
+        }
+
+        stage('Verify Salesforce Connection') {
+            steps {
+                sh 'sf org display --target-org target-org'
+            }
+        }
+
         stage('Deploy') {
             steps {
                 echo "Deploying branch: ${params.BRANCH_NAME}"
