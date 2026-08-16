@@ -66,6 +66,7 @@ pipeline {
                         --target-org salesforce-pipeline \
                         --wait 30
                 '''
+            }
         }
     }
 }
