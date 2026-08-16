@@ -44,7 +44,7 @@ pipeline {
                     sh '''
                         printf '%s' "$SFDX_AUTH_URL" |
                         sf org login sfdx-url \
-                            --sfdx-url-stdin \
+                            --sfdx-url-stdin -\
                             --alias salesforce-pipeline
                     '''
                 }
