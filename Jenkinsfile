@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    options {
+        skipDefaultCheckout(true)
+    }
+
     parameters {
         string(
             name: 'BRANCH_NAME',
@@ -12,9 +16,26 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: "${params.BRANCH_NAME}",
-                    credentialsId: 'github-ssh',
-                    url: 'git@github.com:kirilol-ok/salesforce-pipeline.git'
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: "*/${params.BRANCH_NAME}"]],
+                    userRemoteConfigs: [[
+                        url: 'git@github.com:kirilo1-ok/NEW-REPO.git',
+                        credentialsId: 'github-ssh'
+                    ]]
+                ])
+            }
+        }
+
+        stage('Check Salesforce CLI') {
+            steps {
+                sh 'sf --version'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo "Deploying branch: ${params.BRANCH_NAME}"
             }
         }
     }
