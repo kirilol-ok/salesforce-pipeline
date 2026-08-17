@@ -7,23 +7,39 @@ pipeline {
 
     parameters {
         string(
-            name: 'BRANCH_NAME',
+            name: 'SOURCE_BRANCH',
+            defaultValue: 'feature/test-delta'
+            description: 'PR source branch'
+        )
+        
+        string(
+            name: 'TARGET_BRANCH',
             defaultValue: 'main',
-            description: 'Git branch to deploy'
+            description: 'PR target branch'
         )
     }
 
     stages {
+        
         stage('Checkout') {
             steps {
                 checkout([
                     $class: 'GitSCM',
-                    branches: [[name: "*/${params.BRANCH_NAME}"]],
+                    branches: [[name: "*/${params.SOURCE_BRANCH}"]],
                     userRemoteConfigs: [[
                         url: 'git@github.com:kirilol-ok/salesforce-pipeline.git',
                         credentialsId: 'github-ssh'
                     ]]
                 ])
+            }
+        }
+
+        stage('Fetch Branches') {
+            steps {
+                sh '''
+                    git fetch origin "+refs/heads/*:refs/remotes/origin/*"
+                    git branch -a
+                '''
             }
         }
 
@@ -51,22 +67,49 @@ pipeline {
             }
         }
 
+        stage('Create Delta') {
+            steps {
+                sh '''
+                    rm -rf delta
+                    mkdir -p delta
+
+                    sf sgd source delta \
+                        --from "origin/${TARGET_BRANCH}" \
+                        --to "HEAD" \
+                        --merge-base \
+                        --output-dir delta
+                '''
+            }
+        }
+
+        stage('Show Delta') {
+            steps {
+                sh '''
+                    echo "PACKAGE.XML"
+                    cat delta/package.xml
+
+                    echo "DESTRUCTIVE CHANGES"
+                    cat delta/destructiveChanges/destructiveChanges.xml || true
+                '''
+            }
+        }
+
         stage('Verify Salesforce Connection') {
             steps {
                 sh 'sf org display --target-org salesforce-pipeline'
             }
         }
 
-        stage('Deploy') {
-            steps {
-                echo "Deploying branch: ${params.BRANCH_NAME}"
+        // stage('Deploy') {
+        //     steps {
+        //         echo "Deploying branch: ${params.BRANCH_NAME}"
 
-                sh '''
-                    sf project deploy start \
-                        --target-org salesforce-pipeline \
-                        --wait 30
-                '''
-            }
-        }
+        //         sh '''
+        //             sf project deploy start \
+        //                 --target-org salesforce-pipeline \
+        //                 --wait 30
+        //         '''
+        //     }
+        // }
     }
 }
