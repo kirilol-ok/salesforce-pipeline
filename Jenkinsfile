@@ -121,7 +121,7 @@ pipeline {
                 ]) {
                     sh '''
                         gh pr close "${SOURCE_BRANCH}" \
-                            --repo kirilo1-ok/salesforce-pipeline \
+                            --repo kirilol-ok/salesforce-pipeline \
                             --comment "Salesforce deployment completed successfully."
                     '''
                 }
