@@ -94,16 +94,21 @@ pipeline {
             }
         }
 
-        // stage('Deploy') {
-        //     steps {
-        //         echo "Deploying branch: ${params.BRANCH_NAME}"
+        stage('Deploy Delta') {
+            steps {
+                sh '''
+                    if grep -q '<types>' delta/package/package.xml; then
+                        echo "Deploying changed metadata..."
 
-        //         sh '''
-        //             sf project deploy start \
-        //                 --target-org salesforce-pipeline \
-        //                 --wait 30
-        //         '''
-        //     }
-        // }
+                        sf project deploy start \
+                            --target-org salesforce-pipeline \
+                            --manifest delta/package/package.xml \
+                            --wait 30
+                    else
+                        echo "No added or modified metadata to deploy."
+                    fi
+                '''
+            }
+        }
     }
 }
