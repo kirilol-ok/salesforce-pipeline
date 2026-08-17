@@ -80,7 +80,7 @@ pipeline {
             steps {
                 sh '''
                     echo "PACKAGE.XML"
-                    cat delta/package.xml
+                    cat delta/package/package.xml
 
                     echo "DESTRUCTIVE CHANGES"
                     cat delta/destructiveChanges/destructiveChanges.xml || true
