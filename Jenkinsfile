@@ -8,7 +8,7 @@ pipeline {
     parameters {
         string(
             name: 'SOURCE_BRANCH',
-            defaultValue: 'feature/test-delta'
+            defaultValue: 'feature/test-delta',
             description: 'PR source branch'
         )
         
