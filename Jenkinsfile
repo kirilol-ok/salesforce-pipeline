@@ -34,15 +34,6 @@ pipeline {
             }
         }
 
-        stage('Fetch Branches') {
-            steps {
-                sh '''
-                    git fetch origin "+refs/heads/*:refs/remotes/origin/*"
-                    git branch -a
-                '''
-            }
-        }
-
         stage('Check Salesforce CLI') {
             steps {
                 sh 'sf --version'
