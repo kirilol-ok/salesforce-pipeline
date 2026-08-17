@@ -110,5 +110,22 @@ pipeline {
                 '''
             }
         }
+
+        stage('Close Pull Request') {
+            steps {
+                withCredentials([
+                    string(
+                        credentialsId: 'github-salesforce-pipeline',
+                        variable: 'GH_TOKEN'
+                    )
+                ]) {
+                    sh '''
+                        gh pr close "${SOURCE_BRANCH}" \
+                            --repo kirilo1-ok/salesforce-pipeline \
+                            --comment "Salesforce deployment completed successfully."
+                    '''
+                }
+            }
+        }
     }
 }
