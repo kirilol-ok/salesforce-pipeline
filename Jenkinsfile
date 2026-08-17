@@ -64,10 +64,13 @@ pipeline {
                     rm -rf delta
                     mkdir -p delta
 
+                    MERGE_BASE=$(git merge-base "origin/${TARGET_BRANCH}" HEAD)
+
+                    echo "${MERGE_BASE}"
+
                     sf sgd source delta \
-                        --from "origin/${TARGET_BRANCH}" \
+                        --from "${MERGE_BASE}" \
                         --to "HEAD" \
-                        --merge-base \
                         --output-dir delta
                 '''
             }
